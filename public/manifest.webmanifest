@@ -1,0 +1,14 @@
+{
+  "name": "openplex",
+  "short_name": "openplex",
+  "description": "Your keys, every model. Multi-thread AI chat with web search, memory, and sync.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0c0f",
+  "theme_color": "#0b0c0f",
+  "icons": [
+    { "src": "/pwa-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

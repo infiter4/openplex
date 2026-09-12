@@ -1,0 +1,26 @@
+name: Refresh provider catalog seed
+
+# Keeps public/catalog-seed.json (the bundled models.dev snapshot) from drifting.
+# Runs weekly and on demand; opens a PR only when the seed actually changed.
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/build-catalog-seed.mjs
+      - name: Open a PR if the seed changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'chore: refresh provider catalog seed from models.dev'
+          title: 'chore: refresh provider catalog seed'
+          body: Automated weekly refresh of `public/catalog-seed.json` from models.dev.
+          branch: chore/catalog-seed-refresh
+          add-paths: public/catalog-seed.json

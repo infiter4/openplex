@@ -1,0 +1,19 @@
+node_modules
+dist
+tmp
+.env
+.env.local
+*.local
+.DS_Store
+
+# npm auth token lives here — this repo is public, so never let one in
+.npmrc
+
+# graphify knowledge-graph output (tooling artifact)
+graphify-out/
+
+# editor / agent IDE config
+.claude/
+
+# local dev fixtures (vision-test docs, preview cards)
+test-files/
