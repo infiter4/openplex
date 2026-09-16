@@ -1,0 +1,5 @@
+# Cloudflare Worker config for the openplex proxy (proxy/worker.js).
+# Deploy:  cd proxy  &&  npx wrangler login  &&  npx wrangler deploy
+name = "openplex-proxy"
+main = "worker.js"
+compatibility_date = "2024-11-01"

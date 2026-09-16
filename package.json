@@ -1,0 +1,103 @@
+{
+  "name": "openplex",
+  "version": "0.1.4",
+  "description": "Your keys, every model — a Perplexity-style multi-thread AI chat with web search, memory, an on-device coding agent, and cross-device sync. Bring your own API keys.",
+  "type": "module",
+  "homepage": "https://github.com/infiter4/openplex#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infiter4/openplex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/infiter4/openplex/issues"
+  },
+  "bin": {
+    "openplex": "bin/openplex.mjs"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "proxy",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "llm",
+    "perplexity",
+    "openai",
+    "anthropic",
+    "openrouter",
+    "ollama",
+    "chat",
+    "web-search",
+    "byok"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "start": "node bin/openplex.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "preview": "vite preview",
+    "proxy": "node proxy/server.mjs",
+    "catalog:seed": "node scripts/build-catalog-seed.mjs",
+    "cap:sync": "npm run build && npx cap sync",
+    "android": "npm run build && npx cap sync android && npx cap open android",
+    "android:run": "npm run build && npx cap run android",
+    "android:assets": "npx @capacitor/assets generate --android",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/browser": "^8.0.3",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/keyboard": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.2",
+    "@eslint/js": "^9.39.4",
+    "@supabase/supabase-js": "^2.47.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "dexie": "^4.0.10",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "happy-dom": "^20.10.6",
+    "highlight.js": "^11.10.0",
+    "lucide-react": "^0.468.0",
+    "prettier": "^3.8.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^9.0.1 || ^10.0.0",
+    "rehype-highlight": "^7.0.1",
+    "remark-gfm": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.61.1",
+    "vite": "^6.0.3",
+    "vitest": "^3.2.4",
+    "zustand": "^5.0.2"
+  },
+  "dependencies": {
+    "@capacitor/camera": "^8.2.0",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/share": "^8.0.1",
+    "katex": "^0.16.47",
+    "mammoth": "^1.12.0",
+    "pdfjs-dist": "^4.10.38",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  }
+}
