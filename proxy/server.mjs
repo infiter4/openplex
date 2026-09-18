@@ -5,6 +5,11 @@ import { Readable } from 'node:stream'
 const PORT = process.env.PORT || 8787
 const HOST = process.env.HOST || '127.0.0.1'
 const HOP_BY_HOP = new Set(['host', 'connection', 'content-length', 'accept-encoding', 'x-cors-target', 'origin', 'referer'])
+// Caching directives describe the upstream URL, not this proxy's single shared path.
+const DROP_RESPONSE_HEADERS = new Set([
+  'content-encoding', 'content-length', 'transfer-encoding',
+  'cache-control', 'etag', 'last-modified', 'expires', 'age', 'vary',
+])
 
 const ALLOW_LOCAL = process.env.OPENPLEX_ALLOW_LOCAL !== '0'
 
@@ -75,10 +80,12 @@ const server = http.createServer(async (req, res) => {
     res.statusCode = upstream.status
     upstream.headers.forEach((value, key) => {
       const k = key.toLowerCase()
-      if (k !== 'content-encoding' && k !== 'content-length' && k !== 'transfer-encoding' && !k.startsWith('access-control-')) {
-        res.setHeader(key, value)
-      }
+      if (!DROP_RESPONSE_HEADERS.has(k) && !k.startsWith('access-control-')) res.setHeader(key, value)
     })
+    // This one path proxies every provider, told apart only by a request header, so an upstream
+    // cache directive would let a cached body be replayed for a different target.
+    res.setHeader('cache-control', 'no-store')
+    res.setHeader('vary', 'x-cors-target')
     if (upstream.body) {
       const stream = Readable.fromWeb(upstream.body)
       stream.on('error', () => {})

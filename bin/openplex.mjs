@@ -34,6 +34,12 @@ const MIME = {
   '.woff2': 'font/woff2', '.woff': 'font/woff', '.map': 'application/json', '.txt': 'text/plain',
 }
 const HOP = new Set(['host', 'connection', 'content-length', 'accept-encoding', 'x-cors-target', 'origin', 'referer'])
+// Dropped from proxied responses: the transfer ones we re-encode, and every caching directive —
+// they describe the upstream URL, not /__cors, which serves every provider from one path.
+const DROP_RESPONSE_HEADERS = new Set([
+  'content-encoding', 'content-length', 'transfer-encoding',
+  'cache-control', 'etag', 'last-modified', 'expires', 'age', 'vary',
+])
 
 const SELFHOST_TAG = '<script>window.__OPENPLEX_SELFHOST=true</script>'
 
@@ -91,8 +97,14 @@ async function proxy(req, res) {
     res.statusCode = upstream.status
     upstream.headers.forEach((value, key) => {
       const k = key.toLowerCase()
-      if (k !== 'content-encoding' && k !== 'content-length' && k !== 'transfer-encoding') res.setHeader(key, value)
+      if (!DROP_RESPONSE_HEADERS.has(k)) res.setHeader(key, value)
     })
+    // Every provider is proxied through this one URL, distinguished only by a request header, so
+    // an upstream "cache-control: public, max-age=120" would let the browser serve one provider's
+    // response to the next one that asks. That is exactly how Google ended up listing OpenRouter's
+    // models. The proxy's URL is not a cache key for the content behind it.
+    res.setHeader('cache-control', 'no-store')
+    res.setHeader('vary', 'x-cors-target')
     if (upstream.body) {
       const stream = Readable.fromWeb(upstream.body)
       stream.on('error', () => {})

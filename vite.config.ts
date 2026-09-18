@@ -15,6 +15,11 @@ const HOP_BY_HOP = new Set([
   'cookie', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform',
   'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-dest', 'sec-fetch-user',
 ])
+// Caching directives describe the upstream URL, not /__cors — which every provider shares.
+const DROP_RESPONSE_HEADERS = new Set([
+  'content-encoding', 'content-length', 'transfer-encoding',
+  'cache-control', 'etag', 'last-modified', 'expires', 'age', 'vary',
+])
 
 function corsProxy(): Plugin {
   const handler: Connect.SimpleHandleFunction = async (req, res) => {
@@ -46,8 +51,12 @@ function corsProxy(): Plugin {
       res.statusCode = upstream.status
       upstream.headers.forEach((value, key) => {
         const k = key.toLowerCase()
-        if (k !== 'content-encoding' && k !== 'content-length' && k !== 'transfer-encoding') res.setHeader(key, value)
+        if (!DROP_RESPONSE_HEADERS.has(k)) res.setHeader(key, value)
       })
+      // One URL serves every provider here, keyed only by a request header — an upstream
+      // cache-control would let the browser hand one provider's body to the next.
+      res.setHeader('cache-control', 'no-store')
+      res.setHeader('vary', 'x-cors-target')
       if (upstream.body) {
         const stream = Readable.fromWeb(upstream.body as Parameters<typeof Readable.fromWeb>[0])
         stream.on('error', () => {})

@@ -76,7 +76,13 @@ export default {
     }
 
     const respHeaders = new Headers(upstream.headers)
-    for (const h of ['content-encoding', 'content-length', 'transfer-encoding']) respHeaders.delete(h)
+    // Caching directives are dropped on purpose: every provider is proxied through this one URL,
+    // told apart only by the x-cors-target header, so a cacheable response would be replayed for
+    // whichever target asked next.
+    for (const h of ['content-encoding', 'content-length', 'transfer-encoding',
+                     'cache-control', 'etag', 'last-modified', 'expires', 'age', 'vary']) respHeaders.delete(h)
+    respHeaders.set('cache-control', 'no-store')
+    respHeaders.set('vary', 'x-cors-target')
     for (const k of [...respHeaders.keys()]) if (k.toLowerCase().startsWith('access-control-')) respHeaders.delete(k)
     for (const [k, v] of Object.entries(cors)) respHeaders.set(k, v)
 
