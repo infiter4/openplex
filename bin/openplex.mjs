@@ -73,7 +73,9 @@ async function proxy(req, res) {
   }
   if (!allowedTarget(target)) {
     res.statusCode = 400
-    return res.end('disallowed x-cors-target (only public https or local model servers)')
+    // Name the URL. Without it this is a bare 400 and the user has no way to find out which
+    // provider is pointed somewhere wrong.
+    return res.end(`disallowed x-cors-target: ${String(target).slice(0, 200)} — only public https, or http to a local model server`)
   }
   const chunks = []
   for await (const c of req) chunks.push(c)

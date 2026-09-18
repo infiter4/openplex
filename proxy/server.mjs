@@ -50,7 +50,11 @@ const server = http.createServer(async (req, res) => {
   const target = req.headers['x-cors-target']
   if (typeof target !== 'string' || !allowedTarget(target)) {
     res.statusCode = 400
-    res.end('missing or disallowed x-cors-target')
+    res.end(
+      typeof target === 'string'
+        ? `disallowed x-cors-target: ${target.slice(0, 200)} — only public https, or http to a local model server`
+        : 'missing x-cors-target',
+    )
     return
   }
 

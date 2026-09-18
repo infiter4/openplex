@@ -26,7 +26,7 @@ function corsProxy(): Plugin {
     }
     if (!allowedTarget(target)) {
       res.statusCode = 400
-      res.end('disallowed x-cors-target (only public https or local model servers)')
+      res.end(`disallowed x-cors-target: ${String(target).slice(0, 200)} — only public https, or http to a local model server`)
       return
     }
     const chunks: Buffer[] = []
