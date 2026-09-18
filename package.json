@@ -1,6 +1,6 @@
 {
   "name": "openplex",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Your keys, every model — a Perplexity-style multi-thread AI chat with web search, memory, an on-device coding agent, and cross-device sync. Bring your own API keys.",
   "type": "module",
   "homepage": "https://github.com/infiter4/openplex#readme",

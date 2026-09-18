@@ -129,12 +129,6 @@ export function modelsForProvider(provider: CatalogProvider, conn?: ProviderConn
   const liveSet = new Set(live)
   const known = new Set(Object.keys(provider.models))
 
-  // A live list that shares NOTHING with what the catalog knows this provider serves is not this
-  // provider's list — it's a base URL pointing somewhere else, usually a gateway. Believing it
-  // relabels hundreds of other vendors' models with this provider's name (Google offering
-  // "~openai/gpt-astra-latest"). The catalog is the safer answer; the endpoint is what's wrong.
-  if (catalogModels.length > 0 && !live.some((id) => known.has(id))) return withRepaired(catalogModels)
-
   const kept = catalogModels.filter((m) => liveSet.has(m.id))
   const extras = live.filter((id) => !known.has(id)).map((id) => ({ id, name: id }) as CatalogModel)
   return withRepaired([...kept, ...extras])

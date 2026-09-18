@@ -10,13 +10,14 @@ const provider = (id: string, modelIds: string[]): CatalogProvider => ({
 const conn = (providerId: string, models?: string[]): ProviderConnection => ({ providerId, kind: 'catalog', models })
 const ids = (list: { id: string }[]) => list.map((m) => m.id).sort()
 
-describe('modelsForProvider — a live list that isn’t this provider’s', () => {
-  it('ignores a /models response with nothing in common with the catalog', () => {
-    // What a base URL pointing at a gateway produces: Google offering "~openai/gpt-astra-latest".
-    const google = { id: 'google', name: 'Google', models: { 'gemini-2.5-pro': { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' } } } as never
-    const conn = { providerId: 'google', kind: 'catalog', models: ['~openai/gpt-astra-latest', 'sakana/fugu-max', 'inclusionai/ling-3.0-flash-vl'] } as never
-    const out = modelsForProvider(google, conn)
-    expect(out.map((m) => m.id)).toEqual(['gemini-2.5-pro'])
+describe('modelsForProvider — the live list is the provider speaking for itself', () => {
+  it('believes a live list even when the catalog recognises none of it', () => {
+    // Regression: this used to fall back to the catalog, on the theory that zero overlap meant a
+    // wrong endpoint. But models.dev lags — a provider that renamed everything shares nothing with
+    // it, and rejecting the truth left the picker showing only retired models.
+    const groq = { id: 'groq', name: 'Groq', models: { 'llama-3.1-70b-retired': { id: 'llama-3.1-70b-retired', name: 'old' } } } as never
+    const conn = { providerId: 'groq', kind: 'catalog', models: ['llama-4-scout', 'qwen/qwen3.8-27b'] } as never
+    expect(modelsForProvider(groq, conn).map((m) => m.id)).toEqual(['llama-4-scout', 'qwen/qwen3.8-27b'])
   })
 
   it('still trusts the live list when it genuinely overlaps', () => {
